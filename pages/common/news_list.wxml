@@ -1,0 +1,21 @@
+<template name="news_list">
+    <block wx:for="{{news}}" >
+        <view class="item">
+            <view class="left">
+                <view class="title" data-gid='{{item.news_url}}' bindtap="bindtapFunc">
+                    {{item.news_title}}
+                </view>
+                <view class="sub_title">
+                    <view wx:if="{{flag > 0}}"> 
+                        <text>[{{item.news_source}}] {{item.news_createDate}}</text>
+                    </view>
+                    <view wx:else>
+                        <text>[{{item.news_source}}] {{item.news_createDate}}</text>
+                    </view>
+                    
+                </view>
+            </view>
+            <view style="clear:both"></view>
+        </view>
+    </block>
+</template>
