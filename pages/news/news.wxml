@@ -10,4 +10,7 @@
     <template is="news_list" data="{{news:news,flag:flag}}" />
 </view>
 <!--loading-->
+<view>
+<component-tag-name id="mydialog"></component-tag-name>
+</view>
 <loading hidden="{{hidden}}" bindchange="loadingChange">加载中...</loading>

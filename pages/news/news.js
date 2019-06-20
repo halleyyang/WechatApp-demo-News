@@ -99,6 +99,16 @@ Page({
   },
   onLoad:function(options){
     this.getNews(name);               // 页面初始化 获取默认菜单新闻列表
+    this.dialog = this.selectComponent("#mydialog");
+    var _this = this;
+    //建立连接
+    wx.connectSocket({
+      url: "ws://localhost:8761/lnc/websocket",
+    });
+    wx.onSocketMessage(function (res) {
+      console.log(res.data);
+      _this.dialog.show(res.data);
+    })
   },
   getFilterNews:function(name) {
     var _this = this;
@@ -108,13 +118,12 @@ Page({
       flag: flag
     });
     wx.request({
-      url: 'http://127.0.0.1:8084/lenovo_news_center/getFilterNews/' + name,
+      url: 'http://127.0.0.1:8080/lnc/getFilterNews/' + name,
       data: {
       },
       success: function (res) {
         var data = res.data;
         var getDateLength = res.data.length;
-        console.log(data);
         for (var i = 0; i < getDateLength; i++) {
           data[i].news_createDate = data[i].news_createDate.substring(0, 10);
           if (data[i].news_source == "souhu") {
@@ -130,7 +139,6 @@ Page({
     })
   },
   getNews:function(name){
-    console.log(name);
     this.setData({hidden:false});     // 设置loading显示
     flag = name == "top" ? 1 : 0;     // 默认菜单与其它菜单请求数据返回结果不一致 需要显示不同信息
     var _this = this;
@@ -141,7 +149,7 @@ Page({
     });
     // 获取新闻列表
     wx.request({
-      url: 'http://localhost:8084/lenovo_news_center/getAllNews',
+      url: 'http://localhost:8080/lnc/getAllNews',
         data : {
             // type : name,
             // key  : app.globalData.appkey
@@ -151,7 +159,6 @@ Page({
         success : function(res){
           var data = res.data;
           var getDateLength = res.data.length;
-          console.log(data);
           for (var i = 0; i < getDateLength; i++) {
               data[i].news_createDate = data[i].news_createDate.substring(0, 10);
               if(data[i].news_source == "souhu" )
@@ -165,6 +172,29 @@ Page({
                   flag : flag
               });
         }
+    })
+  },
+  getSocket:function(e) {
+    this.setData({ hidden: false });     // 设置loading显示
+    flag = name == "top" ? 1 : 0;     // 默认菜单与其它菜单请求数据返回结果不一致 需要显示不同信息
+    var _this = this;
+    _this.setData({
+      news: [],
+      hidden: true,
+      flag: flag
+    });
+
+    //建立连接
+    wx.connectSocket({
+      url: "ws://localhost:8761/lnc/websocket",
+    });
+    wx.onSocketMessage(function (res) {
+      console.log(res.data);
+      _this.setData({
+        news: res.data,
+        hidden: true,
+        flag: flag
+      });
     })
   },
   bindtapFunc:function(e) {
